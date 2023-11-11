@@ -1,32 +1,41 @@
 def clasificarNumero(self,tk,numero,row,col):    
     estado=AutomataReales(self,numero)
     self.down_text.config(state="normal")  
+    self.right_text.config(state="normal")  
+    datT=""
     #estados de aceptación
     if int(estado)<0:
-        estado=int(estado)*-1
-        self.down_text.insert(tk.END, "[line:"+str(row)+" col: "+str(col)+"]"+str(estado)+": "+str(numero)+"\n")
-        estado=str(estado)
+        estado=str(int(estado)*-1)
     if estado=="1":
-        return "INT"
+        datT= "INT"
+        self.right_text.insert(tk.END, str(numero),"black_tag")    
+        self.right_text.insert(tk.END, "["+str(datT)+"]","blue_tag")    
     elif estado=="2":
-        return "INT"
+        datT= "INT"
+        self.right_text.insert(tk.END, str(numero),"black_tag")    
+        self.right_text.insert(tk.END, "["+str(datT)+"]","blue_tag")    
     elif estado=="3":
         self.down_text.insert(tk.END, "[line:"+str(row)+" col: "+str(col)+"][ Valor: "+numero+"]"+" ERROR\n")
-        return "DEC"
+        datT=  "DEC"
+        self.right_text.insert(tk.END, str(numero)+"["+str(datT)+"]","red_tag")    
     elif estado=="4":
-        return "DEC"
+        datT=  "DEC"
+        self.right_text.insert(tk.END, str(numero),"black_tag")    
+        self.right_text.insert(tk.END, "["+str(datT)+"]","blue_tag")    
     elif estado=="5":
         self.down_text.insert(tk.END, "[line:"+str(row)+" col: "+str(col)+"][ Valor: "+numero+"]"+"Estado: "+" ERROR\n")
-        return "Real."
+        datT=  "Real."
+        self.right_text.insert(tk.END, str(numero)+"["+str(datT)+"]","red_tag")    
     elif estado=="6":
         self.down_text.insert(tk.END, "[line:"+str(row)+" col: "+str(col)+"][ Valor: "+numero+"]"+"Estado: "+" ERROR\n")
-        return "Real"
+        datT=  "Real"
+        self.right_text.insert(tk.END, str(numero)+"["+str(datT)+"]","red_tag")    
     elif estado=="7":
-        return "Real"
+        datT=  "Real"
+        self.right_text.insert(tk.END, str(numero),"black_tag")    
+        self.right_text.insert(tk.END, "["+str(datT)+"]","blue_tag")    
     #errores
-    self.right_text.config(state="disabled")
-    return
-
+    self.down_text.config(state="disabled")
 def AutomataReales(self,numero):
     estado="1"  
     for char in numero:
@@ -132,8 +141,9 @@ def esLetra(caracter):
     else: return True
 
 def ValidarHex(Num,self,tk,contLine,contChar):
-    
     estado=AutomataHex(Num)
+    if int(estado)<0:
+        estado=int(estado)*-1
     if estado==4:
         self.right_text.insert(tk.END, "[HEX]","blue_tag")
     elif estado==5:
@@ -142,10 +152,28 @@ def ValidarHex(Num,self,tk,contLine,contChar):
         self.right_text.insert(tk.END, "[DEC]","blue_tag")
     elif estado==8:
         self.right_text.insert(tk.END, "[OCT]","blue_tag")
-    else:
-        self.right_text.insert(tk.END, "[",estado,"]","red_tag")
+    
+    elif estado==0:
+        self.right_text.insert(tk.END, "[INT]","red_tag")
         self.down_text.insert(tk.END, str(contLine)+": "+str(contChar)+" Error: "+Num+"\n","red_tag")
-        return False
+    elif estado==1:
+        self.right_text.insert(tk.END, "[INT]","red_tag")
+        self.down_text.insert(tk.END, str(contLine)+": "+str(contChar)+" Error: "+Num+"\n","red_tag")
+    elif estado==2:
+        self.right_text.insert(tk.END, "[HEX]","red_tag")
+        self.down_text.insert(tk.END, str(contLine)+": "+str(contChar)+" Error: "+Num+"\n","red_tag")
+    elif estado==3:
+        self.right_text.insert(tk.END, "[HEX]","red_tag")
+        self.down_text.insert(tk.END, str(contLine)+": "+str(contChar)+" Error: "+Num+"\n","red_tag")
+    elif estado==6:
+        self.right_text.insert(tk.END, "[DEC]","red_tag")
+        self.down_text.insert(tk.END, str(contLine)+": "+str(contChar)+" Error: "+Num+"\n","red_tag")
+    elif estado==9:
+        self.right_text.insert(tk.END, "[INV]","red_tag")
+        self.down_text.insert(tk.END, str(contLine)+": "+str(contChar)+" Error: "+Num+"\n","red_tag")
+    else:
+        self.right_text.insert(tk.END, "[","Inv.","]","red_tag")
+        self.down_text.insert(tk.END, str(contLine)+": "+str(contChar)+" Error: "+Num+"\n","red_tag")
 
 def AutomataHex(Token):
     estado = 0
@@ -158,7 +186,7 @@ def AutomataHex(Token):
             elif caracter=='.':
                 estado=6
             else:
-                return "Int"
+                return "-9"
         elif estado==1:
             if esOctal(caracter)==True:
                 estado=8
@@ -167,44 +195,44 @@ def AutomataHex(Token):
             elif estado=='.':
                 estado=6
             else:
-                return "Int"
+                return "-1"
         elif estado==2:
             if ValidarAF(caracter)==True or esNumero(caracter)==True:
                 estado=3
             else:
-                return "HEX"
+                return "-2"
         elif estado==3:
             if ValidarAF(caracter)==True or esNumero(caracter)==True:
                 estado=4
             else:
-                return "HEX"
+                return "-3"
         elif estado==4:
             if ValidarAF(caracter)==True or esNumero(caracter)==True:
                 estado=3
             else:
-                return "HEX"
+                return "-4"
         elif estado==5:
             if esNumero(caracter)==True:
                 estado=5
             elif caracter=='.':
                 estado=6
             else:
-                return "INT"
+                return "-5"
         elif estado==6:
             if esNumero(caracter)==True:
                 estado=7
             else:
-                return "DEC"
+                return "-6"
         elif estado==7:
             if esNumero(caracter)==True:
                 estado=7
             else:
-                return "DEC" 
+                return "-7" 
         elif estado==8:
             if esOctal(caracter)==True:
                 estado=8
             else:
-                return "OCT"
+                return "-8"
     return estado
 
 def ValidarAF(num):
